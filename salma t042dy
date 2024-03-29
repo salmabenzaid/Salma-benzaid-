@@ -1,0 +1,368 @@
+// salma benzaid : t042dy
+
+//Numbers, sequences/lists, mapping, filtering, folding :
+
+//exrcise1:
+let squareList (lst: int list) =
+    List.map (fun a -> a * a) lst
+
+let myList = [1; 2; 3; 4; 5]
+let squaredList = squareList myList
+printfn "%A" squaredList
+
+// exercise 2:
+
+let filterOutOddNumbers (lst: int list) =
+    List.filter (fun b -> b % 2 = 0) lst
+
+
+let MyList = [1; 2; 3; 4; 5; 6; 7; 8; 9; 10]
+let evenNumbersList = filterOutOddNumbers MyList
+printfn " list of squared elements %A" evenNumbersList
+
+//exercise 3 :
+
+let sumOfPositiveNumbersInList (numbers: float list) =
+    List.sum (List.filter (fun a -> a > 0.0) numbers)
+
+
+let MYList = [-1.0; 2.5; -3.7; 4.0; -5.2; 6.3]
+let sumOfPositives = sumOfPositiveNumbersInList MYList
+printfn "Sum of positive numbers: %f" sumOfPositives
+
+
+//exercise 4:
+
+let capitalizeNamesList (names: string list) : string list =
+    List.map (fun (name: string) -> name.ToUpper()) names
+
+let originalNamesList = [ "salma"; "salah" ; "sanaa" ; "sara"  ]
+let capitalizedNamesList = capitalizeNamesList originalNamesList
+printfn "Capitalized names: %A" capitalizedNamesList
+
+
+//exercise 5:
+
+let filterStringsByLength (strings: string list) (lengthThreshold: int) : string list =
+    List.filter (fun str -> String.length str > lengthThreshold) strings
+
+let inputStrings = ["building "; "work"; "bridge"; "Budapest"; "green " ; "pineapple"]
+let n = 5
+let filteredStrings = filterStringsByLength inputStrings n
+printfn "Strings with length greater than %d: %A" n filteredStrings
+
+// exercise 6:
+
+let countDivisibleBy (numbers: int list) (divisor: int) : int =
+    List.filter (fun nbr -> nbr % divisor = 0) numbers |> List.length
+
+let numbersList = [1; 2; 3; 4; 5; 6; 7; 8; 9; 10]
+let divisor = 3
+let count = countDivisibleBy numbersList divisor
+printfn "Count of numbers divisible by %d: %d" divisor count
+
+//exercise 7:
+
+let findIndices (lst: 'a list) (element: 'a) : int list =
+    let rec findIndicesHelper lst element index acc =
+        match lst with
+        | [] -> List.rev acc
+        | hd::tl when hd = element -> findIndicesHelper tl element (index + 1) (index :: acc)
+        | _::tl -> findIndicesHelper tl element (index + 1) acc
+    findIndicesHelper lst element 0 []
+
+let mylist = [1; 2; 3; 2; 4; 2; 5]
+let element = 2
+let indices = findIndices mylist element
+printfn "Indices of %A in %A: %A" element mylist indices
+
+// exercice 8 :
+
+let concatenateLongerStrings (strings: string list) (n1: int) : string =
+    List.filter (fun str -> String.length str > n1) strings |> String.concat ""
+
+
+let stringsList = ["mohamad"; "semester "; "university "; "caramel "; "chocolat"]
+let n1 = 5
+let concatenatedString = concatenateLongerStrings stringsList n1
+printfn "Concatenated string: %s" concatenatedString
+
+//exercise 9:
+
+let findMaxValueTuple (tuples: ('a * 'b) list) : ('a * 'b) option =
+    match tuples with
+    | [] -> None
+    | _ -> Some (List.maxBy snd tuples)
+
+let tuplesList = [("a", 10); ("b", 20); ("c", 15)]
+match findMaxValueTuple tuplesList with
+| Some (id, value) -> printfn "Tuple with max value: (%A, %A)" id value
+| None -> printfn "No tuples found"
+
+//exercise 10:
+
+let countElementOccurrences (elements: 'a list) : ('a * int) list =
+    elements
+    |> List.groupBy id
+    |> List.map (fun (x, xs) -> (x, List.length xs))
+
+let elementsList = [1; 2; 3; 2; 1; 2; 3; 3; 4]
+let occurrencesList = countElementOccurrences elementsList
+printfn "Element occurrences: %A" occurrencesList
+
+//Discriminated unions :
+
+//execise 11 :
+type TrafficLights =
+    | Red
+    | Yellow
+    | Green
+
+let nextTrafficLightState (currentState: TrafficLights) : TrafficLights =
+    match currentState with
+    | Red -> Green
+    | Yellow -> Red
+    | Green -> Yellow
+
+// exercise 12:
+
+type ArithmeticOperation =
+    | Add
+    | Subtract
+    | Multiply
+    | Divide
+
+let performArithmeticOperation (operation: ArithmeticOperation) (x: float) (y: float) : float option =
+    match operation with
+    | Add -> Some (x + y)
+    | Subtract -> Some (x - y)
+    | Multiply -> Some (x * y)
+    | Divide -> 
+        if y <> 0.0 then Some (x / y)
+        else None // Division by zero is undefined
+
+
+let x = 10.0
+let y = 5.0
+
+let addResult = performArithmeticOperation Add x y
+printfn "Addition result: %A" addResult
+
+let subtractResult = performArithmeticOperation Subtract x y
+printfn "Subtraction result: %A" subtractResult
+
+let multiplyResult = performArithmeticOperation Multiply x y
+printfn "Multiplication result: %A" multiplyResult
+
+let divideResult = performArithmeticOperation Divide x y
+printfn "Division result: %A" divideResult
+
+// exercise 13 :
+
+type Shape =
+    | Circle of radius: float
+    | Rectangle of width: float * height: float
+    | Square of sideLength: float
+
+let calculateArea (shape: Shape) : float =
+    match shape with
+    | Circle radius -> System.Math.PI * radius * radius
+    | Rectangle (width, height) -> width * height
+    | Square sideLength -> sideLength * sideLength
+
+
+let circle = Circle(5.0)
+let rectangle = Rectangle(4.0, 6.0)
+let square = Square(4.0)
+
+printfn "Area of the circle: %f" (calculateArea circle)
+printfn "Area of the rectangle: %f" (calculateArea rectangle)
+printfn "Area of the square: %f" (calculateArea square)
+
+//exercise 14:
+
+type TemperatureScale =
+    | Celsius
+    | Fahrenheit
+
+let temperatureConverter (value: float) (fromScale: TemperatureScale) (toScale: TemperatureScale) : float =
+    match fromScale, toScale with
+    | Celsius, Fahrenheit -> (value * 9.0 / 5.0) + 32.0
+    | Fahrenheit, Celsius -> (value - 32.0) * 5.0 / 9.0
+    | _, _ -> value // No conversion needed for same scales
+
+
+let celsiusTemperature = 100.0
+let fahrenheitTemperature = temperatureConverter celsiusTemperature Celsius Fahrenheit
+printfn "Equivalent Fahrenheit temperature: %f" fahrenheitTemperature
+
+let fahrenheitTemperature2 = 212.0
+let celsiusTemperature2 = temperatureConverter fahrenheitTemperature2 Fahrenheit Celsius
+printfn "Equivalent Celsius temperature: %f" celsiusTemperature2
+
+
+//exercise 15 :
+
+type JsonValue =
+    | JsonObject of (string * JsonValue) list
+    | JsonArray of JsonValue list
+    | JsonString of string
+    | JsonNumber of float
+    | JsonBoolean of bool
+
+let rec prettyPrintJson (jsonValue: JsonValue) : string =
+    let indentLevel = ref 0
+    let indent () = String.replicate (!indentLevel * 2) " "
+    
+    let rec prettyPrintJsonValueRec (jsonValue: JsonValue) : string =
+        match jsonValue with
+        | JsonObject fields ->
+            indentLevel := !indentLevel + 1
+            let fieldsStr = List.map (fun (key, value) -> sprintf "\"%s\": %s" key (prettyPrintJsonValueRec value)) fields
+                            |> String.concat ",\n" 
+            indentLevel := !indentLevel - 1
+            sprintf "{\n%s\n%s}" fieldsStr (indent ())
+        | JsonArray items ->
+            indentLevel := !indentLevel + 1
+            let itemsStr = List.map prettyPrintJsonValueRec items |> String.concat ",\n" 
+            indentLevel := !indentLevel - 1
+            sprintf "[\n%s\n%s]" itemsStr (indent ())
+        | JsonString str -> sprintf "\"%s\"" str
+        | JsonNumber num -> sprintf "%f" num
+        | JsonBoolean b -> if b then "true" else "false"
+    
+    prettyPrintJsonValueRec jsonValue
+
+
+let jsonString = JsonString "Hello, World!"
+let jsonArray = JsonArray [JsonNumber 42.0; JsonBoolean true; JsonString "abc"]
+let jsonObject = JsonObject [("name", JsonString "John"); ("age", JsonNumber 30.0); ("isStudent", JsonBoolean false)]
+let jsonValue = JsonObject [("message", jsonString); ("data", jsonArray); ("info", jsonObject)]
+
+let prettyPrintedJson = prettyPrintJson jsonValue
+printfn "%s" prettyPrintedJson
+
+//Functions, recursion :
+
+//exercise 16:
+
+let rec fibonacci n2 =
+    match n2 with
+    | 0 -> 0
+    | 1 -> 1
+    | _ -> fibonacci (n2 - 1) + fibonacci (n2 - 2)
+
+let n2 = 8
+let fib = fibonacci n2
+printfn "The %dth Fibonacci number is : %d" n2 fib
+
+
+//exercise 17:
+
+let rec recursiveBinarySearch (arr: int[]) (target: int) (left: int) (right: int) : int option =
+    if left > right then
+        None
+    else
+        let mid = left + (right - left) / 2
+        if arr.[mid] = target then
+            Some mid
+        elif arr.[mid] < target then
+            recursiveBinarySearch arr target (mid + 1) right
+        else
+            recursiveBinarySearch arr target left (mid - 1)
+
+
+let search (arr: int[]) (target: int) =
+    let left = 0
+    let right = Array.length arr - 1
+    recursiveBinarySearch arr target left right
+
+
+let sortedArray = [|1; 3; 5; 7; 9; 11; 13; 15; 17; 19|]
+let target = 13
+match search sortedArray target with
+| Some index -> printfn "Element %d found at index %d" target index
+| None -> printfn "Element %d not found in the array" target
+
+
+//exercise 18 :
+
+let rec mergeSort list =
+    let rec merge left right =
+        match left, right with
+        | [], right -> right
+        | left, [] -> left
+        | x::xs, y::ys ->
+            if x < y then x :: merge xs (y::ys)
+            else y :: merge (x::xs) ys
+    
+    let rec split list =
+        let rec splitHelper left right list =
+            match list with
+            | [] -> left, right
+            | x::xs -> splitHelper right (x::left) xs
+        splitHelper [] [] list
+    
+    match list with
+    | [] | [_] -> list
+    | _ ->
+        let left, right = split list
+        merge (mergeSort left) (mergeSort right)
+
+
+let unsortedList = [4; 7; 1; 8; 3; 9; 2; 6; 5]
+let sortedList = mergeSort unsortedList
+printfn "Sorted list: %A" sortedList
+
+
+// exercise 19 : 
+
+type BinaryTree<'v> =
+    | Empty
+    | Node of 'v * BinaryTree<'v> * BinaryTree<'v>
+
+let rec treeDepth<'v> (tree: BinaryTree<'v>) : int =
+    match tree with
+    | Empty -> 0
+    | Node(_, left, right) -> 1 + max (treeDepth left) (treeDepth right)
+
+
+let tree =
+    Node(1,
+        Node(2,
+            Node(4, Empty, Empty),
+            Empty),
+        Node(3, Empty, Empty))
+
+let depth = treeDepth tree
+printfn "Depth of the tree: %d" depth
+
+// exercise 20 :
+
+let rec recursiveIsPalindrome (str: string) : bool =
+    match str.Length with
+    | len when len <= 1 -> true  
+    | _ when str.[0] <> str.[str.Length - 1] -> false 
+    | _ -> recursiveIsPalindrome (str.[1..str.Length - 2]) 
+
+printfn "%b" (recursiveIsPalindrome "radar")  // t
+printfn "%b" (recursiveIsPalindrome "hello")  // f
+
+
+// exercise 20: 
+
+let rec isPalindrome (s:string) =
+    match String.length s with
+    | 0 | 1 -> true 
+    | _ -> 
+        if s.[0] = s.[s.Length - 1] then 
+            isPalindrome (s.Substring(1, s.Length - 2)) 
+        else
+            false
+
+
+let testString = "radar"
+if isPalindrome testString then
+    printfn "%s is a palindrome." testString
+else
+    printfn "%s is not a palindrome." testString
