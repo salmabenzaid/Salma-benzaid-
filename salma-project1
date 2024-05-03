@@ -1,0 +1,50 @@
+//salma-benzaid-t042dy
+
+open System
+open BenchmarkDotNet.Running
+open BenchmarkDotNet.Attributes
+
+type Test = { A: int }
+
+[<Struct>]
+type TestStruct = { A: int }
+
+[<MemoryDiagnoser>]
+type StructBenchmark() =
+
+  member x.CheckOpt(opt: Test option) =
+    opt.IsSome
+
+  member x.CheckOptStruct(opt: TestStruct option) =
+    opt.IsSome
+
+  member x.CheckVopt(opt: Test voption) =
+    opt.IsSome
+
+  member x.CheckVoptStruct(opt: TestStruct voption) =
+    opt.IsSome
+
+  [<Benchmark>]
+  member x.VoptionStructBench () =
+    voption.Some ({ A = 4 }: TestStruct) |> x.CheckVoptStruct
+
+  
+  [<Benchmark>]
+  member x.OptionBench () =
+    Some ({ A = 4 }: Test) |> x.CheckOpt
+
+
+  [<Benchmark>]
+  member x.VoptionBench () =
+    voption.Some ({ A = 4 }: Test) |> x.CheckVopt
+
+  
+  [<Benchmark>]
+  member x.OptionStructBench () =
+    Some ({ A = 4 }: TestStruct) |> x.CheckOptStruct
+
+[<EntryPoint>]
+let main argv =
+    printfn "Hello World from F#!"
+    let summary = BenchmarkRunner.Run<StructBenchmark>()
+    0 // return an integer exit code
