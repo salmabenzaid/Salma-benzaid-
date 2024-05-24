@@ -1,0 +1,58 @@
+namespace DrawingAround
+
+open WebSharper
+open WebSharper.JavaScript
+open WebSharper.Html.Client
+
+[<JavaScript>]
+module Code =
+    
+     let Main =
+        let element = Tags.Canvas []
+        let lastX, lastY, inLine = ref 0, ref 0, ref false
+        let labelPos = Span [Text "Position:"]
+        let updatePos (x, y) =
+            labelPos.Clear()
+            labelPos.Append ("X=" + string x + ", Y=" + string y)
+        let getXYFromMouseEvent (el: Element) (args: Events.MouseEvent) =
+            let pos = JQuery.JQuery.Of(el.Body).Position()
+            args.X - (int pos.Left), args.Y - (int pos.Top)
+        let canvas = As<CanvasElement> element.Dom
+        canvas.Height <- 500
+        canvas.Width <- 500
+        let ctx = canvas.GetContext("2d")
+        Div [Attr.Style "text-align: center; cursor: crosshair"] -< [
+            labelPos
+            Br []
+            element -< [Attr.Style "border: 1px solid gray"]
+            |>! OnMouseDown (fun el args ->
+                let x, y = getXYFromMouseEvent el args
+                updatePos (x, y)
+                lastX := x
+                lastY := y
+                inLine := true
+                ctx.BeginPath()
+            )
+            |>! OnMouseUp (fun el args ->
+                inLine := false
+                updatePos <| getXYFromMouseEvent el args
+            )
+            |>! OnMouseMove (fun el args ->
+                let x, y = getXYFromMouseEvent el args
+                updatePos (x, y)
+                if !inLine then
+                    ctx.MoveTo (float !lastX, float !lastY)
+                    ctx.LineTo (float x, float y)
+                    ctx.Stroke()
+                    lastX := x
+                    lastY := y
+            )
+            |>! OnMouseEnter (fun el args ->
+                updatePos <| getXYFromMouseEvent el args
+            )
+            |>! OnMouseLeave (fun _ _ ->
+                inLine := false
+            )
+            P [B [Text "Draw with your mouse"]]
+        ]
+        |> fun s -> s.AppendTo "main"
